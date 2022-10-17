@@ -1,9 +1,9 @@
 locals {
-  vpc_id           = "vpc-8791faec"
-  subnet_id        = "subnet-4c72bb31"
-  ssh_user         = "ec2-user"
-  key_name         = "chan"
-  private_key_path = "C:/project5/chan.pem"
+  vpc_id           = "vpc-cae18aa1"
+  subnet_id        = "subnet-7105961a"
+  ssh_user         = "ubuntu"
+  key_name         = "dev"
+  private_key_path = "C:/Users/Sugdev/Desktop/dev.pem"
 }
 
 provider "aws" {
@@ -37,8 +37,8 @@ resource "aws_security_group" "nginx" {
 }
 
 resource "aws_instance" "nginx" {
-  ami                         = "ami-092b43193629811af"
-  subnet_id                   = "subnet-4c72bb31"
+  ami                         = "ami-097a2df4ac947655f"
+  subnet_id                   = "subnet-7105961a"
   instance_type               = "t2.micro"
   associate_public_ip_address = true
   security_groups             = [aws_security_group.nginx.id]
@@ -57,10 +57,13 @@ resource "aws_instance" "nginx" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo yum install ansible -y",
-      "sudo yum install git -y",
-      "git clone https://github.com/Veerah1999/task2-1310.git",
-      "ansible-playbook  -i ${aws_instance.nginx.public_ip}, --private-key ${local.private_key_path} /home/ec2-user/task2-1310/nginx.yaml"
+      "sudo apt update",
+      "sudo apt install software-properties-common",
+      "sudo add-apt-repository --yes --update ppa:ansible/ansible",
+      "sudo apt install ansible -y",
+      "sudo apt install git",
+      "git clone https://github.com/SUGADEVE776/Playbook-push-and-file-provisioning-using-terraform.git",
+      "ansible-playbook  -i ${aws_instance.nginx.public_ip}, --private-key ${local.private_key_path} /home/ubuntu/Playbook-push-and-file-provisioning-using-terraform/nginx.yaml"
     ]
   }
 }
